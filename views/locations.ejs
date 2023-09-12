@@ -67,19 +67,6 @@
         border-color: lightslategray;
       }
 
-
-      /* Signup and Login form */
-      /* body {
-          margin: 0;
-          padding: 0;
-          background-image: url('/images/background.jpg');
-          background-size: cover;
-          background-position: center;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-        } */
-      
         header {
           text-align: center;
           padding: 20px;
@@ -93,7 +80,7 @@
 
         footer {
           padding: 20px;
-          margin-top: 300px;
+          margin-top: 50px;
           background-color: #f8f9fa; /* Optional: Add a light background color to the footer for better readability */
         }
         /* button {
@@ -107,7 +94,7 @@
           color: white;
         }
 
-.home::before{
+        .home::before{
   content:'';
   position: absolute;
   height:100%;
@@ -147,6 +134,10 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* .login_form.show,
+.signup_form.show {
+  display: block;
+} */
 
 
 .signup_form {
@@ -204,7 +195,8 @@
 }
 
 .input_box i.email,
-.input_box i.password{
+.input_box i.password,
+.input_box i.user{
     left: 0; 
 }
 
@@ -293,6 +285,7 @@
 .close:hover {
   color: #000;
 }
+
     </style>
 </head>
 <body>
@@ -330,21 +323,21 @@
   </nav>
 
   
-    <!-- Home - login button section -->
-    <section class="home">
+     <!-- Home - login button section -->
+     <section class="home">
       <div class="form_container">
         <i class="uil uil-times form_close"></i>
         <!-- Login form -->
-        <div class="form login_form">
+        <div class="form login_form show">
           <form action="#">
             <h2>Login</h2>
 
             <div class="input_box">
-              <input type="email" placeholder="Enter your email" required/>
+              <input type="email" placeholder="Enter your email" required id="signedEmail" value="">
               <i class="uil uil-envelope-alt email"></i>
             </div>
             <div class="input_box">
-              <input type="password" placeholder="Enter your password" required/>
+              <input type="password" placeholder="Enter your password" required id="signedPassword" value="">
               <i class="uil uil-lock password"></i>
               <i class="uil uil-eye-slash pw_hide"></i>
             </div>
@@ -357,31 +350,38 @@
               <a href="#" class="forgot_pw">Forgot password?</a>
             </div>
             
-            <button class="button">Login Now</button>
+            <button class="button" id="login-button" action="/locations" method="GET">Login Now</button>
 
             <div class="login_signup">Don't have an accout? <a href="#" id="signup">Signup</a></div>
           </form>
         </div>
 
         <!-- Sign Up -->
-        <div class="form signup_form">
+        <div class="form signup_form show">
           <form action="#">
             <h2>Signup</h2>
 
             <div class="input_box">
-              <input type="email" placeholder="Enter your email" required/>
+              <input type="name" placeholder="Enter your name" required id="signupName" value="">
+              <i class="uil uil-user-circle user"></i>
+            </div>
+            <div class="input_box">
+              <input type="email" placeholder="Enter your email" required id="signupEmail" value="">
               <i class="uil uil-envelope-alt email"></i>
             </div>
             <div class="input_box">
-              <input type="password" placeholder="Create password" required/>
+              <input type="password" placeholder="Create password" required id="signupPassword" value="">
               <i class="uil uil-lock password"></i>
               <i class="uil uil-eye-slash pw_hide"></i>
             </div>
             <div class="input_box">
-              <input type="password" placeholder="Confirm password" required/>
+              <input type="password" placeholder="Confirm password" required id="confirmPassword" value="">
               <i class="uil uil-lock password"></i>
               <i class="uil uil-eye-slash pw_hide"></i>
             </div>
+
+            <!-- Display the error message here -->
+            <div id="passwordMismatchError" style="color: red; display: none;">Passwords do not match</div>
 
             <!-- <a href="/reservedLot" class="button-like-like">Signup Now</a> -->
 
@@ -393,7 +393,10 @@
             <div id="signupSuccessModal" class="modal">
               <div class="modal-content">
                 <span class="close" id="closeModal">&times;</span>
+                <!-- <p>Your account has been created successfully! Click here to log in.</p> -->
                 <p>Your account has been created successfully!</p>
+                <!-- <button class="button" id="form-open">Click here to log in</button> -->
+                  
               </div>
             </div>
           </form>
@@ -429,7 +432,8 @@
       <!-- Table header -->
       <thead>
         <tr>
-          <th>Carpark Number</th>
+        
+          <!-- <th>Carpark Number</th> -->
           <th>Address</th>
           <th>Total Lots</th>
           <th>Lots Available</th>
@@ -445,8 +449,9 @@
         <!-- Table rows will be dynamically generated here -->
         <% for (const carpark of carparksData) { %>
           <tr>
-            <td><%= carpark.carparkNumber %></td>
-            <% const matchingCarparkInfo = carparkInfoData.find(info => info.car_park_no === carpark.carparkNumber); %>
+            
+            <!-- <td><%= carpark.carparkNumber %></td> -->
+            <!-- <% const matchingCarparkInfo = carparkInfoData.find(info => info.car_park_no === carpark.carparkNumber); %> -->
             <!--<% console.log('Matching carparkInfo for', carpark.carparkNumber, ':', matchingCarparkInfo); %>-->
             <td><a href="#map"><%= matchingCarparkInfo ? matchingCarparkInfo.address : 'N/A' %></a></td>
             <td><%= carpark.totalLots %></td>
@@ -472,52 +477,46 @@
    <div id="map" style="width: 100%; height: 500px;"></div>
    <script>
 
-    var map = L.map('map').setView([1.3521, 103.8198], 13);
+const map = L.map('map').setView([1.3521, 103.8198], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+// Fetch data from the server and add markers to the map
+fetch('/fetch-data')
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data); // Log the response data to the console
+    data.forEach((parking) => {
+      const { Location, Development, AvailableLots } = parking;
+      const [latitude, longitude] = Location.split(' ').map(parseFloat);
 
-    // Create a marker with a custom data attribute containing the coordinates
-    var singaporeMarker = L.marker([1.3521, 103.8198]).addTo(map);
-    singaporeMarker.bindPopup('Singapore');
-    singaporeMarker.on('mouseover', function() {
-        this.openPopup();
-    });
-    singaporeMarker.on('mouseout', function() {
-        this.closePopup();
-    });
-    singaporeMarker.on('click', function() {
-        // Open Google Maps in a new tab with the coordinates
-        var googleMapsUrl = 'https://www.google.com/maps?q=1.3521,103.8198'; // Replace with your coordinates
-        window.open(googleMapsUrl, '_blank');
-    });
+      const popupContent = `
+        <strong>${Development}</strong><br>
+        Available Lots: ${AvailableLots}
+      `;
 
-    var toaPayohMarker = L.marker([1.3362, 103.8426]).addTo(map);
-    toaPayohMarker.bindPopup('Toa Payoh');
-    toaPayohMarker.on('mouseover', function() {
-        this.openPopup();
-    });
-    toaPayohMarker.on('mouseout', function() {
-        this.closePopup();
-    });
-    toaPayohMarker.on('click', function() {
-        var googleMapsUrl = 'https://www.google.com/maps?q=1.3362,103.8426'; // Replace with your coordinates
-        window.open(googleMapsUrl, '_blank');
-    });
+      const marker = L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup(`${Development}: Available Lots - ${AvailableLots}`)
+        .openPopup();
 
-    var sinMingMarker = L.marker([1.3633, 103.8342]).addTo(map);
-    sinMingMarker.bindPopup('Sin Ming');
-    sinMingMarker.on('mouseover', function() {
-        this.openPopup();
+      marker.on('click', () => {
+        const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        window.location.href = googleMapsUrl;
+      });
+
+      marker.on('mouseover', () => {
+        marker.bindTooltip(popupContent).openTooltip();
+      });
+
+      marker.on('mouseout', () => {
+        marker.closeTooltip();
+      });
     });
-    sinMingMarker.on('mouseout', function() {
-        this.closePopup();
-    });
-    sinMingMarker.on('click', function() {
-        var googleMapsUrl = 'https://www.google.com/maps?q=1.3633,103.8342'; // Replace with your coordinates
-        window.open(googleMapsUrl, '_blank');
-    });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
 
   </script>
 
@@ -553,7 +552,7 @@
             console.log(searchTerm); // Add this line to log the search term
 
             tableRows.forEach((row) => {
-                const addressCell = row.querySelector('td:nth-child(2)'); // Select the second cell (address)
+                const addressCell = row.querySelector('td:nth-child(1)'); // Select the second cell (address)
                 const addressText = addressCell.textContent.toLowerCase();
 
                 if (addressText.includes(searchTerm)) {
@@ -591,9 +590,6 @@
               <h5 class="text-uppercase mb-4 font-weight-bold text-info">Account</h5>
               <hr class="mb-4">
               <p>
-                <a href="#" class="text-light" style="text-decoration: none;">Sign Up</a>
-            </p>
-              <p>
                   <a href="#" class="text-light" style="text-decoration: none;">Profile</a>
               </p>
               <p>
@@ -602,10 +598,6 @@
               <p>
                   <a href="#" class="text-light" style="text-decoration: none;">Billing</a>
               </p>
-              <!-- <p>
-                  <a href="#" class="text-light" style="text-decoration: none;">Notifications</a>
-              </p> -->
-
           </div>
 
           <div class="col-md-2 col col-lg-2 col-xl-2 mx-auto mt-1">
@@ -691,9 +683,47 @@
     signupBtn = document.querySelector("#signup"),
     signupForm = document.querySelector(".signup_form"),
     loginBtn = document.querySelector("#login"),
+    loginForm = document.querySelector(".login_form"),
     pwShowHide = document.querySelectorAll(".pw_hide"),
+    modalContent = document.querySelector(".model-content"),
     modal = document.getElementById("signupSuccessModal"),
     closeModalBtn = document.getElementById("closeModal");
+
+    // Assuming the user has successfully signed up
+    const signupEmailInput = document.getElementById('signupEmail');
+    const signupPasswordInput = document.getElementById('signupPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const passwordMismatchError = document.getElementById("passwordMismatchError");
+
+    // New login-related JavaScript code
+    const loginEmailInput = document.querySelector('.email input[type="email"]');
+    const loginPasswordInput = document.querySelector('.password input[type="password"]');
+    // const modalContent = document.querySelector(".modal-content");
+    // const modal = document.getElementById("signupSuccessModal");
+    // const closeModalBtn = document.getElementById("closeModal");
+    // const loginButton = document.querySelector(".login_form button");
+    // Find the login button element by its ID
+    const loginButton = document.getElementById('login-button');
+
+    // Store the input data in local storage
+    localStorage.setItem('signupEmail', signupEmailInput.value);
+    localStorage.setItem('signupPassword', signupPasswordInput.value);
+    localStorage.setItem('confirmPassword', confirmPasswordInput.value);
+
+    // Check if there is stored data in local storage
+    const storedSignupEmail = localStorage.getItem('signupEmail');
+    const storedSignupPassword = localStorage.getItem('signupPassword');
+    const storedConfirmPassword = localStorage.getItem('confirmPassword');
+
+    
+    
+
+    // If stored data exists, pre-fill the login form
+    if (storedSignupEmail && storedSignupPassword && storedConfirmPassword) {
+      loginEmailInput.value = storedSignupEmail;
+      loginPasswordInput.value = storedSignupPassword;
+    }
+
 
     formOpenBtn.addEventListener("click", () => home.classList.add("show"));
     formCloseBtn.addEventListener("click", () => {
@@ -720,33 +750,106 @@
       formContainer.classList.add("active");
       // Show the popup when the Signup Now button is clicked 
       modal.style.display = "none";
+      signupForm.style.display ="block";
+      loginForm.style.display = "none"; // Hide the login form 
+       // Reset the input fields
+      signupEmailInput.value = "";
+      signupPasswordInput.value = "";
+      confirmPasswordInput.value = "";
     });
     
     loginBtn.addEventListener("click", (e) => {
       e.preventDefault();
       formContainer.classList.remove("active");
+      home.classList.add("show");
+      // Show the login form when the "login" button is clicked 
+      signupForm.style.display = "none"; // Hide the signup form 
+      loginForm.style.display = "block"; 
+      // Reset the input fields
+      signedEmailInput.value = "";
+      signedPasswordInput.value = "";
     });
 
     // Add an event listener for the signup form submission
     signupForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      // formContainer.classList.add("active");
-      // Show the popup when the Signup Now button is clicked
-      modal.style.display = "block";
+      // Store the email and password in local storage
+      // localStorage.setItem("savedEmail", signupEmailInput);
+      // localStorage.setItem("savedPassword", signupPasswordInput);
+      const signupPasswordInput = document.getElementById("signupPassword").value;
+      if (signupPasswordInput !== confirmPasswordInput.value) {
+        passwordMismatchError.style.display = "block"; // Display the error message
+      } else {
+          // Passwords match, you can proceed with form submission
+          // Reset the error message if previously shown
+          passwordMismatchError.style.display = "none";
+
+          // Perform other form submission actions here
+          // formContainer.classList.add("active");
+        // Show the popup when the Signup Now button is clicked
+          modal.style.display = "block";
+      }
+    });
+
+  //   loginButton.addEventListener("click", (e) => {
+  //   e.preventDefault();
+
+  //   // Get entered email and password
+  //   const enteredEmail = loginEmailInput.value;
+  //   const enteredPassword = loginPasswordInput.value;
+
+  //   // Check if entered credentials match stored values
+  //   if (enteredEmail === storedSignupEmail && enteredPassword === storedSignupPassword) {
+  //     // Successful login, you can redirect or perform other actions here
+  //     // For now, we'll just show a success message
+  //     modalContent.innerHTML = "<p>Login successful!</p>";
+  //     modal.style.display = "block";
+  //   } else {
+  //     // Display error message for incorrect credentials
+  //     modalContent.innerHTML = "<p>Email or password is incorrect.</p>";
+  //     modal.style.display = "block";
+  //   }
+  // });
+
+  // Add a click event listener to the login button
+    loginButton.addEventListener('click', () => {
+      // Redirect the user to the loggedin route
+      window.location.href = '/loggedinhome';
     });
 
 
     closeModalBtn.addEventListener("click", function() {
-      home.classList.remove("show"); // Hide the form and the modal when clicking 'x' in the modal
+      home.classList.add("show"); // Hide the form and the modal when clicking 'x' in the modal
       modal.style.display = "none";
+      formContainer.classList.add("active");
+      // Show the login form when closing the popup with 'x'
+      signupForm.style.display = "none";
+      loginForm.style.display = "block";
+      // home.classList.remove("show");
     });
+    
     // Close the modal if the user clicks outside of it
     window.addEventListener("click", function(event) {
       if (event.target === modal) {
         home.classList.remove("show"); // Hide the form and the modal when clicking 'x' in the modal
         modal.style.display = "none";
+        formContainer.classList.remove("active"); // Show the login form
+        // Show the login form when clicking ouside the modal 
+        signupForm.style.display = 'none';
+        loginForm.style.display = "block";
       }
     });
+    
+    modalContent.addEventListener("click", () => {
+      home.classList.add("show"); // Hide the form
+      modal.style.display = "none"; // Hide the modal
+      formContainer.classList.add("active"); // Show the login form
+      // Show the login form when clicking ouside the modal 
+      signupForm.style.display = 'none';
+        loginForm.style.display = "block";
+    });
+     
+  
 
   </script>
 

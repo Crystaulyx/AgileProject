@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="style">
     <link rel="stylesheet" href="login">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" >
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
     <style>
       body {
           margin: 0;
@@ -154,7 +155,8 @@
 }
 
 .input_box i.email,
-.input_box i.password{
+.input_box i.password,
+.input_box i.user{
     left: 0; 
 }
 
@@ -264,18 +266,9 @@
           <li class="nav-item">
             <a class="nav-link" href="locations">Locations</a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="reservations">Reservations</a>s
-          </li> -->
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="favourites">Favourites</a>
-          </li> -->
           <li class="nav-item">
             <a class="nav-link" href="about">About</a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="signup">Log In</a> <!-- Updated link for the Sign Up page -->
-          
         </ul>
         <button class="button" id="form-open">Login</button>
 
@@ -304,8 +297,8 @@
 
             <div class="option_field">
               <span class="checkbox">
-                <input type="checkbox" id="check">
-                <label for="check">Remember me</label>
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Remember me</label>
               </span>
               <a href="#" class="forgot_pw">Forgot password?</a>
             </div>
@@ -316,6 +309,17 @@
           </form>
         </div>
 
+
+        <!-- Remember Me pop up functionality -->
+        <!-- <div class="option_field">
+          <span class="checkbox">
+            <input type="checkbox" id="rememberMe">
+            <label for="rememberMe">Remember me</label>
+          </span>
+          <a href="#" class="forgot_pw">Forgot password?</a>
+        </div> -->
+
+
         <!-- Add this div to display the error message -->
         <!-- <div id="passwordMismatchError" style="color: red; display: none;">Passwords do not match</div> -->
 
@@ -324,6 +328,10 @@
           <form action="#">
             <h2>Signup</h2>
 
+            <div class="input_box">
+              <input type="name" placeholder="Enter your name" required id="signupName" value="">
+              <i class="uil uil-user-circle user"></i>
+            </div>
             <div class="input_box">
               <input type="email" placeholder="Enter your email" required id="signupEmail" value="">
               <i class="uil uil-envelope-alt email"></i>
@@ -407,10 +415,6 @@
                   <p>
                       <a href="#" class="text-light" style="text-decoration: none;">Billing</a>
                   </p>
-                  <!-- <p>
-                      <a href="#" class="text-light" style="text-decoration: none;">Notifications</a>
-                  </p> -->
-  
               </div>
   
               <div class="col-md-2 col col-lg-2 col-xl-2 mx-auto mt-1">
@@ -461,25 +465,25 @@
                   </div>
               </div>
               <div class="row d-flex justify-content-center">
-                  <div class="text-center">
-                      <ul class="list-unstyled list-inline">
-                        <li class="list-inline-item">
-                          <a href="#" class="text-light"><i class='bx bxl-facebook' ></i></a>
-                      </li>
-                      <li class="list-inline-item">
-                          <a href="#" class="text-light"><i class='bx bxl-instagram'></i></a>
-                      </li>
-                      <li class="list-inline-item">
-                          <a href="#" class="text-light"><i class='bx bxl-google' ></i></a>
-                      </li>
-                      <li class="list-inline-item">
-                          <a href="#" class="text-light"><i class='bx bxl-linkedin' ></i></a>
-                      </li>
-                      <li class="list-inline-item">
-                          <a href="#" class="text-light"><i class='bx bxl-youtube' ></i></a>
-                      </li>
-                      </ul>
-                  </div>
+                <div class="text-center">
+                  <ul class="list-unstyled list-inline">
+                    <li class="list-inline-item">
+                      <a href="#" class="text-light"><i class='bx bxl-facebook' ></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="#" class="text-light"><i class='bx bxl-instagram'></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="#" class="text-light"><i class='bx bxl-google' ></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="#" class="text-light"><i class='bx bxl-linkedin' ></i></a>
+                  </li>
+                  <li class="list-inline-item">
+                      <a href="#" class="text-light"><i class='bx bxl-youtube' ></i></a>
+                  </li>
+                  </ul>
+                </div>
               </div>
   
           </div>
@@ -500,7 +504,7 @@
       modalContent = document.querySelector(".model-content"),
       modal = document.getElementById("signupSuccessModal"),
       closeModalBtn = document.getElementById("closeModal");
-
+     
       // Assuming the user has successfully signed up
       const signupEmailInput = document.getElementById('signupEmail');
       const signupPasswordInput = document.getElementById('signupPassword');
@@ -516,25 +520,64 @@
       // const loginButton = document.querySelector(".login_form button");
       // Find the login button element by its ID
       const loginButton = document.getElementById('login-button');
+      // below for the remembr me function 
+      const rememberMeCheckbox = document.getElementById('rememberMe');
 
       // Store the input data in local storage
-      localStorage.setItem('signupEmail', signupEmailInput.value);
-      localStorage.setItem('signupPassword', signupPasswordInput.value);
-      localStorage.setItem('confirmPassword', confirmPasswordInput.value);
+      // ****Below nothing is stored as of now 
+      // localStorage.setItem('signupEmail', signupEmailInput.value);
+      // localStorage.setItem('signupPassword', signupPasswordInput.value);
+      // localStorage.setItem('confirmPassword', confirmPasswordInput.value);
 
       // Check if there is stored data in local storage
       const storedSignupEmail = localStorage.getItem('signupEmail');
       const storedSignupPassword = localStorage.getItem('signupPassword');
       const storedConfirmPassword = localStorage.getItem('confirmPassword');
 
-      
+      // for the Remember Me pop up function 
+      // Check if there is stored data in local storage
+      const storedLoginEmail = localStorage.getItem('loginEmail');
+      const storedLoginPassword = localStorage.getItem('loginPassword');
+      const storedRememberMe = localStorage.getItem('rememberMe');
+
+      // below for the Remember Me pop up function 
+      // If stored data exists and rememberMe is checked, pre-fill the login form
+      if (storedLoginEmail && storedLoginPassword && storedRememberMe === 'true') {
+        loginEmailInput.value = storedLoginEmail;
+        loginPasswordInput.value = storedLoginPassword;
+        rememberMeCheckbox.checked = true;
+      }
       
 
-      // If stored data exists, pre-fill the login form
-      if (storedSignupEmail && storedSignupPassword && storedConfirmPassword) {
-        loginEmailInput.value = storedSignupEmail;
-        loginPasswordInput.value = storedSignupPassword;
+      // Function for the Remember Me popup to show up 
+      function showRememberMePopup(){
+        if (rememberMeCheckbox.checked){
+          const confirmation = confirm("Do you want your details to be remembered?");
+          if (confirmation){
+            localStorage.setItem('loginEmail', loginEmailInput.value);
+            localStorage.setItem('loginPassword', loginPasswordInput.value);
+            localStorage.setItem('rememberMe', 'true');
+          }else{
+            localStorage.removeItem('loginEmail');
+            localStorage.removeItem('loginPassword');
+            localStorage.setItem('rememberMe', 'false');
+          }
+          // }else{
+          //   localStorage.removeItem('loginEmail');
+          //   localStorage.removeItem('loginPassword');
+          //   localStorage.setItem('rememberMe', 'false');
+          // }
+        }
+
       }
+
+      // below has not been implemented as of now. 
+      // If stored data exists, pre-fill the login form
+      //****Below nothing is stored as of now yet 
+      // if (storedSignupEmail && storedSignupPassword && storedConfirmPassword) {
+      //   loginEmailInput.value = storedSignupEmail;
+      //   loginPasswordInput.value = storedSignupPassword;
+      // }
 
 
       formOpenBtn.addEventListener("click", () => home.classList.add("show"));
@@ -603,28 +646,11 @@
         }
       });
 
-    //   loginButton.addEventListener("click", (e) => {
-    //   e.preventDefault();
-
-    //   // Get entered email and password
-    //   const enteredEmail = loginEmailInput.value;
-    //   const enteredPassword = loginPasswordInput.value;
-
-    //   // Check if entered credentials match stored values
-    //   if (enteredEmail === storedSignupEmail && enteredPassword === storedSignupPassword) {
-    //     // Successful login, you can redirect or perform other actions here
-    //     // For now, we'll just show a success message
-    //     modalContent.innerHTML = "<p>Login successful!</p>";
-    //     modal.style.display = "block";
-    //   } else {
-    //     // Display error message for incorrect credentials
-    //     modalContent.innerHTML = "<p>Email or password is incorrect.</p>";
-    //     modal.style.display = "block";
-    //   }
-    // });
 
     // Add a click event listener to the login button
       loginButton.addEventListener('click', () => {
+        // show the 'Remember Me' popup when the login button is clicked 
+        showRememberMePopup();
         // Redirect the user to the loggedin route
         window.location.href = '/loggedinhome';
       });
@@ -639,6 +665,8 @@
         loginForm.style.display = "block";
         // home.classList.remove("show");
       });
+
+      
       
       // Close the modal if the user clicks outside of it
       window.addEventListener("click", function(event) {
@@ -664,6 +692,8 @@
     
   
     </script>
+
   
   </body>
 </html>
+

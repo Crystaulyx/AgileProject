@@ -57,6 +57,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
+    
   }
 
   .modal-content {
@@ -67,7 +68,9 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    width:25%;
     transform: translate(-50%, -50%);
+   
   }
 
   .close {
@@ -76,6 +79,7 @@
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
+    transition: aa 0.5s ease-out;
   }
 
   .close:hover {
@@ -113,9 +117,6 @@
             <a class="nav-link" href="loggedinlocations">Locations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="reservations">Reservations</a>s
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="favourites">Favourites</a>
           </li>
           <li class="nav-item">
@@ -143,7 +144,7 @@
 
     <!-- Search Section -->
     <div class="container d-flex justify-content-center mt-4">
-      <form id="filter-form" class="form-inline" action="/locations" method="GET">
+      <form id="filter-form" class="form-inline" action="/loggedinlocations" method="GET">
         <!-- <input id="filter-input" type="text" class="form-control mr-2" name="search" placeholder="Search by address"> -->
         <button type="submit" class="btn btn-primary">Start searching</button>
       </form>
@@ -179,9 +180,6 @@
                   <p>
                       <a href="#" class="text-light" style="text-decoration: none;">Billing</a>
                   </p>
-                  <!-- <p>
-                      <a href="#" class="text-light" style="text-decoration: none;">Notifications</a>
-                  </p> -->
   
               </div>
   

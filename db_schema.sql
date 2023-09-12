@@ -42,8 +42,28 @@ CREATE TABLE IF NOT EXISTS erprates(
     EffectiveDate TEXT
 );
 
--- Insert default data (if necessary here)
+CREATE TABLE IF NOT EXISTS userCredentials(
+    id  INTEGER PRIMARY KEY AUTOINCREMENT, 
+    loginName TEXT,
+    loginEmail TEXT, 
+    loginPassword INTEGER
+);
 
+CREATE TABLE IF NOT EXISTS newcarparkinfo (
+    id INTEGER PRIMARY KEY,
+    CarParkID TEXT,
+    Area TEXT,
+    Development TEXT,
+    Location TEXT,
+    AvailableLots INTEGER,
+    LotType TEXT,
+    Agency TEXT
+);
+
+-- Insert default data (if necessary here)
+-- Table for the signup_form 
+INSERT OR IGNORE INTO userCredentials ("loginName", "loginEmail", "loginPassword") 
+VALUES ('William', 'williamlow@gmail.com', 'will08');
 
 COMMIT;
 

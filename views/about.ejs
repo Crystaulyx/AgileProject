@@ -9,7 +9,6 @@
     <style>
         footer {
           padding: 20px;
-          margin-top: 150px;
           background-color: #f8f9fa; /* Optional: Add a light background color to the footer for better readability */
         }
         /* button {
@@ -124,7 +123,8 @@
 }
 
 .input_box i.email,
-.input_box i.password{
+.input_box i.password,
+.input_box i.user{
     left: 0; 
 }
 
@@ -243,14 +243,14 @@
     min-height: 100vh;
     display: flex; 
     align-items: center;
-    justify-content: center; 
+    justify-content: right; 
     background-color: #f1f1f1;
 }
 .inner-container {
     width: 55%;
     float: right;
     background-color: #fdfdfd;
-    padding: 150px;
+    padding: 128px;
 }
 .inner-container h1{
     margin-bottom: 30px; 
@@ -360,7 +360,11 @@
           <div class="form signup_form show">
             <form action="#">
               <h2>Signup</h2>
-  
+              
+              <div class="input_box">
+                <input type="name" placeholder="Enter your name" required id="signupName" value="">
+                <i class="uil uil-user-circle user"></i>
+              </div>
               <div class="input_box">
                 <input type="email" placeholder="Enter your email" required id="signupEmail" value="">
                 <i class="uil uil-envelope-alt email"></i>
@@ -437,9 +441,6 @@
                 <div class="col-md-2 col col-lg-2 col-xl-2 mx-auto mt-1">
                     <h5 class="text-uppercase mb-4 font-weight-bold text-info">Account</h5>
                     <hr class="mb-4">
-                    <p>
-                      <a href="#" class="text-light" style="text-decoration: none;">Sign Up</a>
-                  </p>
                     <p>
                         <a href="#" class="text-light" style="text-decoration: none;">Profile</a>
                     </p>
@@ -529,6 +530,8 @@
     
       </footer>
 
+      
+      <!-- Javascript for the signin & login form -->
       <script>
         const formOpenBtn = document.querySelector("#form-open"),
         home = document.querySelector(".home"),

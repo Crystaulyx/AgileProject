@@ -3,6 +3,7 @@
 const axios = require('axios'); // Library required for LTA API documentation 
 const ejs = require('ejs');
 const express = require('express');
+//const serverless = require('serverless-http');
 // const mainRoutes = require('./routes/main');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path'); // Import the 'path' module
@@ -11,6 +12,7 @@ const fs = require('fs');
 const csvParser = require('csv-parser');
 const { rejects } = require('assert');
 const app = express();
+const router = express.Router();
 const port = 5000;
 
 const db = new sqlite3.Database('database.db');
@@ -25,6 +27,7 @@ app.set("view engine", "ejs");
 
 
 app.use(express.static(__dirname + '/public'));
+
 
 
 //Insert intial data
@@ -99,6 +102,58 @@ cron.schedule('*/5 * * * *', async()=>{
   }
 });
 
+app.get('/fetch-data', async (req, res) => {
+  try {
+    const response = await axios.get(
+      'http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2',
+      {
+        headers: {
+          AccountKey: 'JrUNPOZST02d6av2pOPOMA==',
+        },
+      }
+    );
+
+    const parkingData = response.data.value;
+
+    // Store data in the 'newcarparkinfo' table
+    const insertStmt = db.prepare(`
+      INSERT INTO newcarparkinfo (CarParkID, Area, Development, Location, AvailableLots, LotType, Agency)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    db.serialize(() => {
+      parkingData.forEach((parking) => {
+        const {
+          CarParkID,
+          Area,
+          Development,
+          Location,
+          AvailableLots,
+          LotType,
+          Agency,
+        } = parking;
+        insertStmt.run(
+          CarParkID,
+          Area,
+          Development,
+          Location,
+          AvailableLots,
+          LotType,
+          Agency
+        );
+      });
+    });
+
+    insertStmt.finalize(); // Finalize the prepared statement
+
+    // Send the fetched data as JSON
+    res.json(parkingData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching and storing data.');
+  }
+});
+
 //ErpRates on ejs
 app.get('/test', async (req, res) => {
   try {
@@ -117,13 +172,14 @@ app.get('/test', async (req, res) => {
   }
 });
 
+
 app.get('/', (req,res)=>{
   res.render('index.ejs');
 })
 
-app.get('/signup', (req,res)=>{
-  res.render('signup.ejs');
-})
+// app.get('/signup', (req,res)=>{
+//   res.render('signup.ejs');
+// })
 
 // Define a route to render the loggedin.ejs page
 app.get('/loggedinhome', (req, res) => {
@@ -172,6 +228,7 @@ app.get('/locations', async(req,res)=>{
   }
 });
 
+//Logged in Locations 
 app.get('/loggedinlocations', async(req,res)=>{
   try{
    let carparkInfoData = await new Promise((resolve, reject)=>{
@@ -231,6 +288,14 @@ app.get('/favourites', (req, res) => {
   res.render('favourite.ejs');
 });
 
+//Handle saving favourites (via AJAX or form submission)
+app.post('/save-favourite', (req, res) => {
+  const carparkNumber = req.body.carparkNumber;
+  // Implement the logic to save the favourite, e.e. store it in a database or array 
+
+  res.status(200).send('Favourite saved successfully');
+})
+
 app.get('/get-first-5', async (req, res) => {
   try {
       db.all('SELECT * FROM carparks LIMIT 5', (err, rows) => {
@@ -252,6 +317,9 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
 });
+
+//app.use('/.netlify/home', router);
+//module.exports.handler = serverless(app);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
